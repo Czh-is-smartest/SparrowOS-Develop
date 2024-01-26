@@ -1,0 +1,60 @@
+../z_tools/make.exe -r img
+make.exe[1]: Entering directory `E:/SparrowOS Develop/SparrowOS'
+../z_tools/make.exe -r SparrowOS.img
+make.exe[2]: Entering directory `E:/SparrowOS Develop/SparrowOS'
+../z_tools/nask.exe ipl10.nas ipl10.bin ipl10.lst
+../z_tools/nask.exe asmhead.nas asmhead.bin asmhead.lst
+../z_tools/cc1.exe -I../z_tools/haribote/ -Os -Wall -quiet -o bootpack.gas bootpack.c
+../z_tools/gas2nask.exe -a bootpack.gas bootpack.nas
+../z_tools/nask.exe bootpack.nas bootpack.obj bootpack.lst
+../z_tools/nask.exe naskfunc.nas naskfunc.obj naskfunc.lst
+../z_tools/makefont.exe font.txt font.bin
+../z_tools/bin2obj.exe font.bin font.obj _font
+../z_tools/cc1.exe -I../z_tools/haribote/ -Os -Wall -quiet -o graphic.gas graphic.c
+../z_tools/gas2nask.exe -a graphic.gas graphic.nas
+../z_tools/nask.exe graphic.nas graphic.obj graphic.lst
+../z_tools/cc1.exe -I../z_tools/haribote/ -Os -Wall -quiet -o dsctbl.gas dsctbl.c
+../z_tools/gas2nask.exe -a dsctbl.gas dsctbl.nas
+../z_tools/nask.exe dsctbl.nas dsctbl.obj dsctbl.lst
+../z_tools/nask.exe int.nas int.obj int.lst
+../z_tools/cc1.exe -I../z_tools/haribote/ -Os -Wall -quiet -o fifo.gas fifo.c
+../z_tools/gas2nask.exe -a fifo.gas fifo.nas
+../z_tools/nask.exe fifo.nas fifo.obj fifo.lst
+../z_tools/cc1.exe -I../z_tools/haribote/ -Os -Wall -quiet -o keyboard.gas keyboard.c
+../z_tools/gas2nask.exe -a keyboard.gas keyboard.nas
+../z_tools/nask.exe keyboard.nas keyboard.obj keyboard.lst
+../z_tools/cc1.exe -I../z_tools/haribote/ -Os -Wall -quiet -o mouse.gas mouse.c
+../z_tools/gas2nask.exe -a mouse.gas mouse.nas
+../z_tools/nask.exe mouse.nas mouse.obj mouse.lst
+../z_tools/obj2bim.exe @../z_tools/haribote/haribote.rul out:bootpack.bim stack:3136k map:bootpack.map \
+	bootpack.obj naskfunc.obj font.obj graphic.obj dsctbl.obj int.obj fifo.obj keyboard.obj mouse.obj
+../z_tools/bim2hrb.exe bootpack.bim bootpack.hrb 0
+copy /B asmhead.bin+bootpack.hrb SparrowOS.sys
+asmhead.bin
+bootpack.hrb
+已复制         1 个文件。
+../z_tools/edimg.exe   imgin:../z_tools/fdimg0at.tek \
+	wbinimg src:ipl10.bin len:512 from:0 to:0 \
+	copy from:SparrowOS.sys to:@: \
+	imgout:SparrowOS.img
+rm graphic.gas graphic.nas dsctbl.gas dsctbl.nas mouse.gas mouse.nas bootpack.gas bootpack.nas fifo.gas fifo.nas keyboard.gas keyboard.nas
+make.exe[2]: Leaving directory `E:/SparrowOS Develop/SparrowOS'
+make.exe[1]: Leaving directory `E:/SparrowOS Develop/SparrowOS'
+copy SparrowOS.img ..\z_tools\qemu\fdimage0.bin
+已复制         1 个文件。
+../z_tools/make.exe -r -C ../z_tools/qemu
+make.exe[1]: Entering directory `E:/SparrowOS Develop/z_tools/qemu'
+qemu-win.bat
+
+E:\SparrowOS Develop\z_tools\qemu>qemu.exe -L . -m 32 -localtime -std-vga -fda fdimage0.bin 
+make.exe[1]: Leaving directory `E:/SparrowOS Develop/z_tools/qemu'
+../z_tools/make.exe -r clean
+make.exe[1]: Entering directory `E:/SparrowOS Develop/SparrowOS'
+del *.bin
+del *.lst
+del *.obj
+del bootpack.map
+del bootpack.bim
+del bootpack.hrb
+del SparrowOS.sys
+make.exe[1]: Leaving directory `E:/SparrowOS Develop/SparrowOS'
